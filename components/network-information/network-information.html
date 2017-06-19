@@ -1,0 +1,143 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="network-information">
+  <script>
+    /**
+     * `network-information`
+     * Implements Network Information API, witch provides information about the system&#39;s connection in terms of general connection type.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class NetworkInformation extends Polymer.Element {
+      static get is() { return 'network-information'; }
+      static get properties() {
+        return {
+          apiSupported: {
+            type: Boolean,
+            notify: true,
+            readOnly: true
+          },
+
+          /**
+           * Returns false if the user agent is definitely offline (disconnected from the network).
+           * Returns true if the user agent might be online.
+           */
+          onLine: {
+            type: Boolean,
+            notify: true,
+            readOnly: true
+          },
+
+          /**
+           * The type attribute, when getting, returns the connection type
+           * that the user agent is using.
+           */
+          type: {
+            type: String,
+            notify: true,
+            readOnly: true
+          },
+
+          /**
+           * The effectiveType attribute, when getting, returns the effective
+           * connection type that is determined using a combination of recently
+           * observed rtt and downlink values.
+           */
+          effectiveType: {
+            type: String,
+            notify: true,
+            readOnly: true
+          },
+
+          /**
+           * The downlinkMax attribute represents an upper bound on
+           * the downlink speed of the first network hop. The reported value
+           * is in megabits per second and determined by the properties
+           * of the underlying connection technology.
+           */
+          downlinkMax: {
+            type: Number,
+            notify: true,
+            readOnly: true
+          },
+          /**
+           * Represents the effective bandwidth estimate in megabits per second,
+           * rounded to nearest multiple of 25 kilobits per second,
+           * and is based on recently observed application layer throughput
+           * across recently active connections, excluding connections made
+           * to private address space.
+           */
+          downlink: {
+            type: Number,
+            notify: true,
+            readOnly: true
+          },
+
+          /**
+           * The rtt attribute represents the effective round-trip time estimate
+           * in milliseconds, rounded to nearest multiple of 25 milliseconds,
+           * and is based on recently observed application-layer RTT
+           * measurements across recently active connections,
+           * excluding connections made to private address space.
+           */
+          rtt: {
+            type: Number,
+            notify: true,
+            readOnly: true
+          }
+        };
+      }
+
+      constructor() {
+        super();
+        this._changeHandler = this._changeHandler.bind(this);
+        this._updateOnlineStatus = this._updateOnlineStatus.bind(this);
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this._setOnLine(navigator.onLine);
+        this._setApiSupported(!!navigator.connection);
+        window.addEventListener('online', this._updateOnlineStatus);
+        window.addEventListener('offline', this._updateOnlineStatus);
+        if (this.apiSupported) {
+          navigator.connection.addEventListener('change', this._changeHandler);
+        }
+        this._updateOnlineStatus();
+      }
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        window.removeEventListener('online', this._updateOnlineStatus);
+        window.removeEventListener('offline', this._updateOnlineStatus);
+        if (this.apiSupported) {
+          navigator.connection.removeEventListener('change', this._changeHandler);
+        }
+      }
+
+      _changeHandler() {
+        this._setType(navigator.connection.type);
+        this._setEffectiveType(navigator.connection.effectiveType);
+        this._setDownlinkMax(navigator.connection.downlinkMax);
+        this._setDownlink(navigator.connection.downlink);
+        this._setRtt(navigator.connection.rtt);
+      }
+
+      _updateOnlineStatus(evt) {
+        this._setOnLine(navigator.onLine);
+        if (!this.apiSupported) {
+          if (this.onLine) {
+            this._setType('unknown');
+            this._setDownlinkMax(+Infinity);
+          } else {
+            this._setType('none');
+            this._setDownlinkMax(0);
+          }
+        }
+      }
+    }
+
+    window.customElements.define(NetworkInformation.is, NetworkInformation);
+  </script>
+</dom-module>

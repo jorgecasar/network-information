@@ -1,0 +1,39 @@
+{
+  "name": "network-information",
+  "version": "1.0.0",
+  "description": "Implements Network Information API, witch provides information about the system&#39;s connection in terms of general connection type.",
+  "main": "network-information.html",
+  "directories": {
+    "test": "test",
+    "demo": "demo"
+  },
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0"
+  },
+   "devDependencies": {
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  },
+  "scripts": {
+    "start": "polymer serve",
+    "test": "polymer test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jorgecasar/network-information.git"
+  },
+  "keywords": [
+    "polymer",
+    "web components",
+    "network",
+    "online",
+    "offline"
+  ],
+  "author": "Jorge del Casar <jorge.casar@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jorgecasar/network-information/issues"
+  },
+  "homepage": "https://github.com/jorgecasar/network-information#readme"
+}
